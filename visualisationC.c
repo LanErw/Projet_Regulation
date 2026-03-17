@@ -31,11 +31,10 @@ void visualisationC(float puissance_f){
       return;
    }
    if(puissance_f > 0.0f){
-      strcpy(chauffage, "true");
+      fprintf(fichier, "%s\n%.2f\n%.2f\n", "true", tinterieure, texterieure);
    } else {
-      strcpy(chauffage, "false");
+      fprintf(fichier, "%s\n%.2f\n%.2f\n", "false", tinterieure, texterieure);
    }
-   fprintf(fichier, "%s\n%.2f\n%.2f\n", chauffage, tinterieure, texterieure);
    fclose(fichier);
 }
 
