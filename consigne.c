@@ -10,7 +10,7 @@
       FILE *fichier = fopen("consigne.txt", "r");
       if (fichier != NULL) {
          float nouvelleConsigne_f;
-         if (fscanf(fichier, "%f", &nouvelleConsigne_f) == 1) {
+         if (fgets(fichier, "%f", &nouvelleConsigne_f) == 1) {
             thermostat_f = nouvelleConsigne_f;
          }
          fclose(fichier);
