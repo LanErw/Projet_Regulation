@@ -9,7 +9,10 @@ void visualisationT(temp_t myTemp){
     if(fichier == NULL){
         return;
     }
-    
+    if(fopen(".verrouConsigne","x")==NULL || fopen(".verrouData","x")==NULL){
+        fclose(fichier);
+        return;
+    }
     if(fgets(ligne, sizeof(ligne), fichier)) {
         strcpy(chauffage, ligne);
     }
@@ -18,4 +21,6 @@ void visualisationT(temp_t myTemp){
     fichier = fopen(data, "w");
     fprintf(fichier, "%s\n%.2f\n%.2f\n",chauffage,myTemp.interieure,myTemp.exterieure);
     fclose(fichier);
+    remove(".verrouConsigne");
+    remove(".verrouData");
 }
