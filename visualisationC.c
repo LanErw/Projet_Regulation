@@ -15,11 +15,6 @@ void visualisationC(float puissance_f){
    if(fichier == NULL){
       return;
    }
-   if(fopen(".verrouConsigne","x")==NULL || fopen(".verrouData","x")==NULL){
-        fclose(fichier);
-        return;
-    }
-   
    fgets(ligne, sizeof(ligne), fichier);
    if(fgets(ligne, sizeof(ligne), fichier)){
       tinterieure = strtof(ligne, NULL);
@@ -42,7 +37,5 @@ void visualisationC(float puissance_f){
    }
    fprintf(fichier, "%s\n%.2f\n%.2f\n", chauffage, tinterieure, texterieure);
    fclose(fichier);
-   remove(".verrouConsigne");
-   remove(".verrouData");
 }
 
