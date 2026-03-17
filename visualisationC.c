@@ -16,15 +16,7 @@ void visualisationC(float puissance_f){
       return;
    }
    
-   if(fgets(ligne, sizeof(ligne), fichier)){
-      size_t len = strlen(ligne);
-      if(strcmp(ligne, "true") == 0){
-         strcpy(chauffage, "true");
-      } else {
-         strcpy(chauffage, "false");
-      }
-   }
-
+   fgets(ligne, sizeof(ligne), fichier);
    if(fgets(ligne, sizeof(ligne), fichier)){
       tinterieure = strtof(ligne, NULL);
    }
@@ -38,6 +30,11 @@ void visualisationC(float puissance_f){
    fichier = fopen(data, "w");
    if(fichier == NULL){
       return;
+   }
+   if(puissance_f > 0.0f){
+      strcpy(chauffage, "true");
+   } else {
+      strcpy(chauffage, "false");
    }
    fprintf(fichier, "%s\n%.2f\n%.2f\n", chauffage, tinterieure, texterieure);
    fclose(fichier);
