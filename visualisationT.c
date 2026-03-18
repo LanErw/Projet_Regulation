@@ -1,26 +1,22 @@
 #include "visualisationT.h"
 
 void visualisationT(temp_t myTemp){
-    char *data = "data.txt";
-    char ligne[100];
-    char chauffage[10] = "false";
-
-    FILE *fichier = fopen(data, "r");
+    char chauffage[10] = "";
+    if(fopen(".verrouData","wx")==NULL){
+        return;
+    }
+    
+    FILE *fichier = fopen("data.txt", "r");
     if(fichier == NULL){
+        remove(".verrouData");
         return;
     }
-    if(fopen(".verrouConsigne","x")==NULL || fopen(".verrouData","x")==NULL){
-        fclose(fichier);
-        return;
-    }
-    if(fgets(ligne, sizeof(ligne), fichier)) {
-        strcpy(chauffage, ligne);
-    }
+
+    fscanf(fichier, "%s\n", chauffage);
     fclose(fichier);
 
-    fichier = fopen(data, "w");
-    fprintf(fichier, "%s\n%.2f\n%.2f\n",chauffage,myTemp.interieure,myTemp.exterieure);
+    fichier = fopen("data.txt", "w");
+    fprintf(fichier, "%s\n%0.2f\n%0.2f\n",chauffage,myTemp.interieure,myTemp.exterieure);
     fclose(fichier);
-    remove(".verrouConsigne");
     remove(".verrouData");
 }
