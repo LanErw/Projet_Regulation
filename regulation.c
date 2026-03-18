@@ -1,50 +1,48 @@
-    #include <stdio.h>
-	 #include <stdlib.h>
-    #include "regulation.h"
-	 
-float regulation(int regul, float consigne, float tint, float* error_sum, float* prev_error, int first_iteration) {
+#include <stdio.h>
+#include <stdlib.h>
+#include "regulation.h"
+
+#define TIME_STEP 10
+float regulation(int regul, float consigne, float tint, my_pid_t *pid, float preverror, int first_iteration) {
     float commande = 0.0;
-    float erreur = consigne - tint;
-
     if (regul == 1) {
-        // Tout ou Rien : 50% si tint < consigne, 0 sinon
         if (tint < consigne) {
-            commande = 50.0;
+            return 50.0;
         } else {
-            commande = 0.0;
+            return 0.0;
         }
-    } 
-    else if (regul == 2) {
-        float kp = 1.1, ki = 0.2, kd = 0.15;
-
-        if (first_iteration) {
-            // Première itération : seulement le terme P
-            commande = kp * erreur;
-            *error_sum = erreur;
-            *prev_error = erreur;
-        } else {
-            *error_sum += erreur;
-            float derivee = erreur - (*prev_error);
-            commande = (kp * erreur) + (ki * (*error_sum)) + (kd * derivee);
-            *prev_error = erreur;
-        }
-
-        // Saturation linéaire entre 0 et 100
-        if (commande > 100.0) commande = 100.0;
-        if (commande < 0.0)   commande = 0.0;
     }
-
+    float error = consigne - tint;
+    commande = (pid->Kp) * error;
+    if (first_iteration) {
+        return commande;
+    }
+    commande += (pid->Ki)*((preverror + error) * TIME_STEP/2) + (pid->integral);
+    pid->integral += (pid->Ki)*((preverror + error) * TIME_STEP/2);
+    commande += (pid->Kd)*((error - preverror) / TIME_STEP);    
+    if (commande > 100.0){
+        commande = 100.0;
+        //pid->integral -= (pid->Ki)*((preverror + error) * TIME_STEP/2);
+    } 
+    if (commande < 0.0){
+        commande = 0.0;
+        //pid->integral -= (pid->Ki)*((preverror + error) * TIME_STEP/2);
+    }
     return commande;
 }
 
-	float regulationTest(int regul, float csgn, float* tabT, int nT) {
+float regulationTest(int regul, float csgn, float* tabT, int nT) {
     float cmd = 100.0;
-    float error_sum = 0.0;
-    float prev_error = 0.0;
+    float preveror = 0;
     int first_iteration = 1;
-
+    my_pid_t *pid = malloc(sizeof(my_pid_t));
+    pid->Kp = 1.1;
+    pid->Ki = 0.2;
+    pid->Kd = 0.15;
+    pid->integral = 0.0;
     for (int i = 0; i < nT; i++) {
-        cmd = regulation(regul, csgn, tabT[i], &error_sum, &prev_error, first_iteration);
+        cmd = regulation(regul, csgn, tabT[i], pid, preveror, first_iteration);
+        preveror = csgn - tabT[i];
         first_iteration = 0;
     }
     return cmd;
