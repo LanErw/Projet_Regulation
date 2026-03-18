@@ -4,37 +4,36 @@
 #include "visualisationC.h"
 
 
-void visualisationC(float puissance_f){
-   const char *data = "data.txt";
-   char ligne[100];
+
+void visualisationC(float puissance_f) {
    char chauffage[10] = "false";
    float tinterieure = 0.0f;
    float texterieure = 0.0f;
-
-   FILE *fichier = fopen(data, "r");
-   if(fichier == NULL){
+   if(fopen(".verrouData","wx")==NULL){
       return;
    }
-   fgets(ligne, sizeof(ligne), fichier);
-   if(fgets(ligne, sizeof(ligne), fichier)){
-      tinterieure = strtof(ligne, NULL);
+   FILE *fichier = fopen("data.txt", "r");
+   if (fichier == NULL) {
+      remove(".verrouData");
+      return;
    }
 
-   if(fgets(ligne, sizeof(ligne), fichier)){
-      texterieure = strtof(ligne, NULL);
-   }
+   fscanf(fichier, "%s\n%f\n%f\n", chauffage, &tinterieure, &texterieure);
 
    fclose(fichier);
 
-   fichier = fopen(data, "w");
-   if(fichier == NULL){
+   fichier = fopen("data.txt", "w");
+   if (fichier == NULL) {
+      remove(".verrouData");
       return;
    }
-   if(puissance_f > 0.0f){
+
+   if (puissance_f > 0) {
       fprintf(fichier, "%s\n%.2f\n%.2f\n", "true", tinterieure, texterieure);
    } else {
       fprintf(fichier, "%s\n%.2f\n%.2f\n", "false", tinterieure, texterieure);
    }
-   fclose(fichier);
-}
 
+   fclose(fichier);
+   remove(".verrouData");
+}
