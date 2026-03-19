@@ -20,7 +20,7 @@ float consigne(float thermostatPrec_f) {
         }
         fclose(fichier);
     }
-
+    remove(".verrouConsigne");
     return thermostat_f;
     remove(".verrouConsigne");
 }
