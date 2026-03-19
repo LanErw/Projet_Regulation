@@ -22,5 +22,4 @@ float consigne(float thermostatPrec_f) {
     }
     remove(".verrouConsigne");
     return thermostat_f;
-    remove(".verrouConsigne");
 }
