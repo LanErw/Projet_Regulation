@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "visualisationC.h"
 #include "visualisationT.h"
 #include "consigne.h"
@@ -7,33 +8,40 @@
 #include "regulation.h"
 
 int main() {
-    float consigne_f = 0.0f;
-    temp_t myTemp = {0.0f, 0.0f};
+    float consigne_f = 15.0f;
+    temp_t myTemp = {10.0f, 5.0f};
     float puissance = 0.0f;
-    float tabT[10];
+    float tabT[10000];
     int nT = 0;
-    // trace.txt : temps, puis, text, tint
+    float preverror = 0.0f;
+    my_pid_t *pid = malloc(sizeof(my_pid_t));
+    pid->Kp = 1.1;
+    pid->Ki = 0.2;
+    pid->Kd = 0.15;
+    pid->integral = 0.0;
+    int first_iteration = 1;
+    struct simParam_s *sim_param = simConstruct(myTemp);
+    if (sim_param == NULL) {
+        free(pid);
+        return 1;
+    }
 
     while (1) {
         consigne_f = consigne(consigne_f);
-        FILE* trace_pf = fopen("trace.txt", "r");
-        if (trace_pf == NULL){
-            printf("Erreur d'ouverture du fichier trace.txt\n");
-            return;
-        }
-        for (int i = 0; i < nT; i++) {
-            tabT[i] = tabT[i+1];
-        }
-        tabT[nT] = myTemp.interieure;
-        puissance = regulationTest(2, consigne_f, tabT, nT);
-        myTemp = simCalc(consigne_f, simConstruct(myTemp));
+        puissance = regulation(1, consigne_f, myTemp.interieure, pid, preverror, first_iteration);
         visualisationC(puissance);
+        myTemp = simCalc(puissance, sim_param);
         visualisationT(myTemp);
-        if(nT<9){
-            nT++;
+        tabT[nT] = myTemp.interieure;
+        nT++;
+        preverror = consigne_f - myTemp.interieure;
+        if(first_iteration == 1){
+            first_iteration = 0;
         }
         sleep(1);
     }
 
+    simDestruct(sim_param);
+    free(pid);
     return 0;
 }
