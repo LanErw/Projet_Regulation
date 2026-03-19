@@ -5,7 +5,7 @@ float consigne(float thermostatPrec_f) {
     float thermostat_f = thermostatPrec_f;
 
     // Si le verrou EST présent, on retourne la consigne précédente sans toucher au fichier
-    FILE *verrou = fopen(".verrouConsigne", "r");
+    FILE *verrou = fopen(".verrouConsigne", "wx");
     if (verrou != NULL) {
         fclose(verrou);
         return thermostatPrec_f;
@@ -20,6 +20,6 @@ float consigne(float thermostatPrec_f) {
         }
         fclose(fichier);
     }
-
+    remove(".verrouConsigne");
     return thermostat_f;
 }
