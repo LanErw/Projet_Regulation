@@ -81,7 +81,7 @@ class myapp:
 			tk.Label(self.lpanel, textvariable=self.str_Theat).grid(column=1, row=crow)
 			crow += 1
 			# ---
-			tk.Label(self.lpanel, text="---").grid(column=0, row=crow)
+			tk.Label(self.lpanel, text="---").grid(column=0, row=crow) 
 			crow += 1
 			# Text 1
 			self.str_Text = StringVar(self.lpanel,self.oText)
