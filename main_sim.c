@@ -11,8 +11,6 @@ int main() {
     float consigne_f = 15.0f;
     temp_t myTemp = {10.0f, 5.0f};
     float puissance = 0.0f;
-    float tabT[10000];
-    int nT = 0;
     float preverror = 0.0f;
     my_pid_t *pid = malloc(sizeof(my_pid_t));
     pid->Kp = 1.1;
@@ -28,12 +26,10 @@ int main() {
 
     while (1) {
         consigne_f = consigne(consigne_f);
-        puissance = regulation(1, consigne_f, myTemp.interieure, pid, preverror, first_iteration);
-        visualisationC(puissance);
+        puissance = regulation(2, consigne_f, myTemp.interieure, pid, preverror, first_iteration);
         myTemp = simCalc(puissance, sim_param);
+        visualisationC(puissance);
         visualisationT(myTemp);
-        tabT[nT] = myTemp.interieure;
-        nT++;
         preverror = consigne_f - myTemp.interieure;
         if(first_iteration == 1){
             first_iteration = 0;
